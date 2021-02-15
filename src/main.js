@@ -1,4 +1,5 @@
-import GameScene from "./scenes/gameScene.js";
+import GameScene from "./scenes/game.js";
+import MainMenuScene from "./scenes/menu.js";
 
 /** @type {Phaser.Core.Config} */
 const config = {
@@ -8,7 +9,7 @@ const config = {
 	physics: {
 		default: "arcade"
 	},
-	scene: new GameScene(),
+	scene: [MainMenuScene, GameScene],
 	plugins: {
 		scene: [
 			{
@@ -21,7 +22,3 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-
-game.canvas.addEventListener("mousedown", (e) => {
-	game.input.mouse.requestPointerLock();
-});

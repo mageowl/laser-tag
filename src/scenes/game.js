@@ -1,11 +1,25 @@
-import Player from "../player.js";
+import Player from "../objects/player.js";
 
 export default class GameScene extends Phaser.Scene {
+	constructor() {
+		super({ key: "game" });
+	}
+
+	init() {
+		const game = this.game;
+
+		game.canvas.addEventListener("mousedown", (e) => {
+			game.input.mouse.requestPointerLock();
+		});
+	}
+
 	preload() {
-		this.load.image("tileset-sand", "assets/sprites/tileset/sand.png");
-		this.load.image("player", "assets/sprites/skins/basic-light.png");
-		this.load.image("target", "assets/sprites/crosshair.png");
-		this.load.tilemapTiledJSON("map", "assets/tilemap/level.json");
+		this.load.setBaseURL("assets");
+
+		this.load.image("tileset-sand", "sprites/tileset/sand.png");
+		this.load.image("player", "sprites/skins/basic-light.png");
+		this.load.image("target", "sprites/crosshair.png");
+		this.load.tilemapTiledJSON("map", "tilemap/level.json");
 	}
 
 	create() {
