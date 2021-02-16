@@ -20,14 +20,19 @@ export default class MainMenuScene extends Phaser.Scene {
 		this.bg = this.add.image(0, 0, "bg").setOrigin(0, 0).setVisible(false);
 		this.titleImage = this.add.sprite(center, 90, "title").setVisible(false);
 
+		// Buttons
+		this.btns = [];
+
 		this.joinPublicBtn = this.add
 			.text(center, 200, "Join Public Game")
 			.setFontFamily("Jura")
 			.setFontSize(24)
 			.setColor("#f0f0f0")
-			.setShadow(0, 3, "#f00")
+			.setShadow(0, 3, "#000")
 			.setOrigin(0.5, 0)
-			.setVisible(false);
+			.setVisible(false)
+			.setInteractive();
+		this.addButton(this.joinPublicBtn, "joinPublic");
 
 		// Intro
 		this.introText = this.add
@@ -75,25 +80,52 @@ export default class MainMenuScene extends Phaser.Scene {
 	update() {
 		this.titleImage.y = 90 + Math.sin(this.time.now / 300) * 10;
 
-		if (
-			pointInRect(
-				new Phaser.Math.Vector2(
-					this.input.mousePointer.worldX,
-					this.input.mousePointer.worldY
-				),
-				this.joinPublicBtn
-					.getBounds()
-					.setPosition(
-						this.joinPublicBtn.x - this.joinPublicBtn.getBounds().width / 2,
-						this.joinPublicBtn.y
-					)
-			)
-		) {
-			this.joinPublicBtn.setShadowOffset(0, 5);
-			this.joinPublicBtn.y = 198;
-		} else {
-			this.joinPublicBtn.setShadowOffset(0, 3);
-			this.joinPublicBtn.y = 200;
-		}
+		this.btns.forEach((btn) => {
+			if (btn.state == "hover") {
+				btn.obj.setShadowOffset(0, 5);
+				btn.obj.y = 198;
+				btn.obj.setBackgroundColor("#0000");
+			} else if (btn.state == "active") {
+				btn.obj.setBackgroundColor("#f00");
+				btn.obj.setShadowOffset(0, 3);
+				btn.obj.y = 200;
+
+				switch (btn.id) {
+					case "joinPublic":
+						this.scene.start("game");
+				}
+			} else {
+				btn.obj.setShadowOffset(0, 3);
+				btn.obj.y = 200;
+				btn.obj.setBackgroundColor("#0000");
+			}
+		});
+	}
+
+	/**
+	 * Adds a button to the main menu.
+	 *
+	 * @param {Phaser.GameObjects.GameObject} obj
+	 * @memberof MainMenuScene
+	 */
+	addButton(obj, id) {
+		obj.input.cursor = "pointer";
+		obj.on(
+			"pointerover",
+			() => (this.btns.find((btn) => btn.id == id).state = "hover")
+		);
+		obj.on(
+			"pointerout",
+			() => (this.btns.find((btn) => btn.id == id).state = "rest")
+		);
+		obj.on(
+			"pointerdown",
+			() => (this.btns.find((btn) => btn.id == id).state = "active")
+		);
+		obj.on(
+			"pointerup",
+			() => (this.btns.find((btn) => btn.id == id).state = "hover")
+		);
+		this.btns.push({ id, obj, state: "rest" });
 	}
 }
